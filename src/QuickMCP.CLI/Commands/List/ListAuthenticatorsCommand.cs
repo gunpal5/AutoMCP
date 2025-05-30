@@ -4,7 +4,6 @@ using QuickMCP.Authentication;
 using QuickMCP.CLI.Commands.List;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Color = System.Drawing.Color;
 
 namespace QuickMCP.CLI.Commands;
 

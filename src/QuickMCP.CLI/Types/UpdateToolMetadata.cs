@@ -1,5 +1,2 @@
-﻿
-using QuickMCP.Types;
-
-namespace QuickMCP.CLI.Types;
+﻿namespace QuickMCP.CLI.Types;
 

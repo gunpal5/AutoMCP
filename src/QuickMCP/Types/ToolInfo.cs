@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using ModelContextProtocol.Protocol.Types;
+using ModelContextProtocol.Protocol;
 
 namespace QuickMCP.Types;
 

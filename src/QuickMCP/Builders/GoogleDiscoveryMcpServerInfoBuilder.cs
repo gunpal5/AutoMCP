@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Threading.Tasks;
 using QuickMCP.Abstractions;
-using QuickMCP.Authentication;
 using QuickMCP.Helpers;
 using QuickMCP.Types;
 using Microsoft.Extensions.Logging;

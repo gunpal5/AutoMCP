@@ -2,8 +2,8 @@
 using QuickMCP.Http;
 using QuickMCP.Types;
 using Microsoft.OpenApi.Models;
-using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
+using ModelContextProtocol.Protocol;
 
 namespace QuickMCP.Server;
 
@@ -22,13 +22,14 @@ public class McpServerApiTool : McpServerTool
         ProtocolTool = info.ToProtocolTool();
     }
     /// <inheritdoc/>
-    public override async Task<CallToolResponse> InvokeAsync(RequestContext<CallToolRequestParams> request,
-        CancellationToken cancellationToken = new CancellationToken())
+    public override async ValueTask<CallToolResponse> InvokeAsync(RequestContext<CallToolRequestParams> request,
+                                                                  CancellationToken cancellationToken = new CancellationToken())
     {
         string url = _toolInfo.Url;
         Dictionary<string, JsonElement>? requestBody = null;
         var pathParams = new Dictionary<string, string?>();
         var queryParams = new List<KeyValuePair<string, string?>>();
+        var headerParams = new List<KeyValuePair<string, string?>>();
         var arguments = request.Params?.Arguments;
         if (arguments != null)
         {
@@ -42,7 +43,7 @@ public class McpServerApiTool : McpServerTool
                     {
                         if (!arguments.TryGetValue(p.Name, out var value))
                         {
-                            if(p.Required == true)
+                            if (p.Required == true)
                                 throw new Exception($"Missing parameter {p.Name}");
                         }
                         else
@@ -54,7 +55,7 @@ public class McpServerApiTool : McpServerTool
                     {
                         if (!arguments.TryGetValue(p.Name, out var value))
                         {
-                            if(p.Required == true)
+                            if (p.Required == true)
                                 throw new Exception($"Missing parameter {p.Name}");
                         }
                         else
@@ -68,6 +69,26 @@ public class McpServerApiTool : McpServerTool
                             }
                             else
                                 queryParams.Add(new KeyValuePair<string, string>(p.Name, value.GetRawText().Replace("\"", "")));
+                        }
+                    }
+                    else if (p.In == ParameterLocation.Header.ToString().ToLower())
+                    {
+                        if (!arguments.TryGetValue(p.Name, out var value))
+                        {
+                            if (p.Required == true)
+                                throw new Exception($"Missing parameter {p.Name}");
+                        }
+                        else
+                        {
+                            if (value.ValueKind == JsonValueKind.Array)
+                            {
+                                foreach (var item in value.EnumerateArray())
+                                {
+                                    headerParams.Add(new KeyValuePair<string, string>($"{p.Name}", item.GetRawText().Replace("\"", "")));
+                                }
+                            }
+                            else
+                                headerParams.Add(new KeyValuePair<string, string>(p.Name, value.GetRawText().Replace("\"", "")));
                         }
                     }
                 }
@@ -86,14 +107,12 @@ public class McpServerApiTool : McpServerTool
                          _toolInfo.Method.Equals("PUT", StringComparison.OrdinalIgnoreCase) ||
                          _toolInfo.Method.Equals("PATCH", StringComparison.OrdinalIgnoreCase))
                 {
-                   requestBody = arguments.ToDictionary(s=>s.Key,y=>y.Value) ?? new Dictionary<string, JsonElement>();
+                    requestBody = arguments.ToDictionary(s => s.Key, y => y.Value) ?? new Dictionary<string, JsonElement>();
                 }
             }
         }
 
-        return await _caller.Call(new HttpMethod(_toolInfo.Method), url, content: requestBody,
-            _toolInfo.MimeType ?? "application/json",
-            queryParams, pathParams, cancellationToken);
+        return await _caller.Call(new HttpMethod(_toolInfo.Method), url, content: requestBody, _toolInfo.MimeType ?? "application/json", queryParams, headerParams, pathParams, cancellationToken);
     }
 
     public override Tool ProtocolTool { get; }

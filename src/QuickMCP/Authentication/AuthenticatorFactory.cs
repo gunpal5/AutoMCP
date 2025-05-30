@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using QuickMCP.Abstractions;
+﻿using QuickMCP.Abstractions;
 using QuickMCP.Types;
 
 namespace QuickMCP.Authentication;

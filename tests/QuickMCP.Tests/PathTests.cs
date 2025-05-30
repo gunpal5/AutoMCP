@@ -1,5 +1,4 @@
-﻿using Firecrawl;
-using QuickMCP.Helpers;
+﻿using QuickMCP.Helpers;
 
 namespace QuickMCP.Tests;
 

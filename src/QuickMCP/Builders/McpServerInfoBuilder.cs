@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using QuickMCP.Abstractions;
 using QuickMCP.Types;
-using Microsoft.Extensions.Logging;
 
 namespace QuickMCP.Builders;
 

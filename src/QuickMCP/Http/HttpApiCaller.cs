@@ -2,7 +2,7 @@
 using System.Text.Json;
 using QuickMCP.Abstractions;
 using Microsoft.Extensions.Logging;
-using ModelContextProtocol.Protocol.Types;
+using ModelContextProtocol.Protocol;
 
 namespace QuickMCP.Http;
 
@@ -17,6 +17,8 @@ public class HttpApiCaller
     private ILogger? _logger;
     private string _baseUrl;
     private Dictionary<string, string> _defaultPathParams = new Dictionary<string, string>();
+
+    private Dictionary<string, string> _headers = new Dictionary<string, string>();
 
     /// <summary>
     /// Constructor to initialize the HttpApiCaller with an HttpClient and optional logger.
@@ -76,16 +78,22 @@ public class HttpApiCaller
     /// <param name="pathParam">Path parameters for the API call.</param>
     /// <param name="cancellationToken">Cancellation token to cancel the request.</param>
     /// <returns>A task that represents the asynchronous operation, returning a CallToolResponse.</returns>
-    public async Task<CallToolResponse> Call(HttpMethod method, string url,
-        Dictionary<string, JsonElement>? content = null, string mimeType = "application/json",
-        List<KeyValuePair<string, string?>>? query = null, Dictionary<string, string?>? pathParam = null,
-        CancellationToken cancellationToken = default)
+    public async Task<CallToolResponse> Call(HttpMethod method,
+                                            string url,
+                                            Dictionary<string, JsonElement>? content = null,
+                                            string mimeType = "application/json",
+                                            List<KeyValuePair<string, string?>>? query = null,
+                                            List<KeyValuePair<string, string?>>? headerParams = null,
+                                            Dictionary<string, string?>? pathParam = null,
+                                            CancellationToken cancellationToken = default)
     {
         var uri = BuildUri(url, query, pathParam);
         _logger?.LogInformation($"Making {method} request to {url}");
 
         HttpRequestMessage request = new HttpRequestMessage(method, uri);
         AddContent(request, content, mimeType);
+
+        AddHeaders(request, headerParams);
 
         if (_authenticator != null)
         {
@@ -149,6 +157,23 @@ public class HttpApiCaller
         }
     }
 
+    private void AddHeaders(HttpRequestMessage request, List<KeyValuePair<string, string?>> headerParams)
+    {
+        if (headerParams == null)
+        {
+            return;
+        }
+
+        foreach (var header in headerParams)
+        {
+            if (string.IsNullOrEmpty(header.Value))
+            {
+                continue;
+            }
+            request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+        }
+    }
+
     /// <summary>
     /// Adds content to an HTTP request with the specified MIME type.
     /// </summary>
@@ -186,6 +211,7 @@ public class HttpApiCaller
                         JsonSerializer.Serialize(content,
                             QuickMcpJsonSerializerContext.Default.DictionaryStringJsonElement),
                         Encoding.UTF8, mimeType);
+
             }
             else throw new Exception($"Unsupported mime type {mimeType}");
         }

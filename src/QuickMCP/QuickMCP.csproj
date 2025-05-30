@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>netstandard2.0;net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net8.0</TargetFrameworks>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>QuickMCP</RootNamespace>
         <LangVersion>latest</LangVersion>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <Version>0.1.8</Version>
+        <Version>0.1.9</Version>
     </PropertyGroup>
     <PropertyGroup>
         <PackageId>QuickMCP</PackageId>
@@ -24,8 +24,8 @@
         <PackageIcon>favicon.png</PackageIcon>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="$(MSBuildThisFileDirectory)..\..\README.md" Pack="true" PackagePath="\" Visible="false"/>
-        <None Include="..\..\favicon.png" Pack="True" PackagePath=""/>
+        <None Include="$(MSBuildThisFileDirectory)..\..\README.md" Pack="true" PackagePath="\" Visible="false" />
+        <None Include="..\..\favicon.png" Pack="True" PackagePath="" />
     </ItemGroup>
 
     <!-- Dependencies only needed by netstandard2.0 -->
@@ -34,12 +34,13 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.6.24" />
-        <PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.7" />
+        <PackageReference Include="ModelContextProtocol" Version="0.2.0-preview.1" />
+        <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.2.0-preview.1" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Base\MCPServer.cs"/>
-        <Compile Remove="Helpers\MCPServer.cs"/>
+        <Compile Remove="Base\MCPServer.cs" />
+        <Compile Remove="Helpers\MCPServer.cs" />
     </ItemGroup>
 </Project>

@@ -1,7 +1,5 @@
 using System.ComponentModel;
 using System.Text.Json;
-using GenerativeAI.Utility;
-using QuickMCP.Types;
 using Spectre.Console;
 using Spectre.Console.Cli;
 

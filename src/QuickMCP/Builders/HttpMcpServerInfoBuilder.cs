@@ -1,10 +1,9 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
+using ModelContextProtocol.Protocol;
 using QuickMCP.Abstractions;
 using QuickMCP.Authentication;
 using QuickMCP.Http;
 using QuickMCP.Types;
-using Microsoft.Extensions.Logging;
 
 namespace QuickMCP.Builders;
 public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
@@ -16,7 +15,7 @@ public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
     /// <inheritdoc/>
     protected override McpServerInfo CreateToolCollection()
     {
-        var collection =  base.CreateToolCollection();
+        var collection = base.CreateToolCollection();
         BuildHttpCaller();
         collection.SetHttpCaller(_httpApiCaller);
         return collection;
@@ -60,17 +59,25 @@ public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
             ServerDescription = config.ServerDescription;
         }
 
-        if(!string.IsNullOrEmpty(config.ApiBaseUrl))
+        if (!string.IsNullOrEmpty(config.ApiBaseUrl))
+        {
             SetBaseUrl(config.ApiBaseUrl);
-        
+        }
+
         // Set resource and prompt generation flags from config
         GenerateResourcesFlag = config.GenerateResources;
         GeneratePromptsFlag = config.GeneratePrompts;
 
         if (config.ExcludedPaths != null)
+        {
             ExcludePaths(config.ExcludedPaths);
+        }
+
         if (config.IncludedPaths != null)
+        {
             OnlyForPaths(config.IncludedPaths);
+        }
+
         if (config.ServerHeaders != null)
         {
             foreach (var header in config.ServerHeaders)
@@ -86,6 +93,7 @@ public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
                 DefaultPathParams[param.Key] = param.Value;
             }
         }
+
         if (config.Authentication != null)
         {
             Authenticator = AuthenticatorFactory.Create(config.Authentication);
@@ -94,6 +102,18 @@ public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
         if (config.MetadataFile != null)
         {
             MetadataUpdateConfig = JsonSerializer.Deserialize<MetadataUpdateConfig>(File.ReadAllText(config.MetadataFile), QuickMcpJsonSerializerContext.Default.MetadataUpdateConfig);
+        }
+
+        if (config.ExternalResources?.Count > 0)
+        {
+            foreach (var resource in config.ExternalResources)
+            {
+                if (resource is null)
+                {
+                    continue;
+                }
+                ExternalResources[resource.Name] = resource;
+            }
         }
     }
 
@@ -112,8 +132,8 @@ public abstract class HttpMcpServerInfoBuilder : BaseMcpServerInfoBuilder
         {
             this._httpClient.DefaultRequestHeaders.Add(headers.Key, headers.Value);
         }
-        
-        _httpApiCaller = new HttpApiCaller(this._httpClient,  this.Logger);
+
+        _httpApiCaller = new HttpApiCaller(this._httpClient, this.Logger);
         _httpApiCaller.SetBaseUrl(this.BaseUrl);
         _httpApiCaller.SetDefaultPathParams(this.DefaultPathParams);
         _httpApiCaller.SetAuthenticator(Authenticator);

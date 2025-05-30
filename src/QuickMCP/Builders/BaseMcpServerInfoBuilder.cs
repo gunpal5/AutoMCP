@@ -1,13 +1,11 @@
-﻿using System.Diagnostics;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using QuickMCP.Abstractions;
 using QuickMCP.Helpers;
-using QuickMCP.Http;
 using QuickMCP.Types;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.OpenApi.Readers;
+using MCP = ModelContextProtocol.Protocol;
 
 namespace QuickMCP.Builders;
 
@@ -22,6 +20,7 @@ public abstract class BaseMcpServerInfoBuilder : IMcpServerInfoBuilder
     protected ILoggerFactory LoggerFactory;
     protected readonly HttpClient HttpClient;
     protected readonly Dictionary<string, Prompt> Prompts;
+    protected readonly Dictionary<string, MCP.Resource> ExternalResources;
 
     protected IAuthenticator? Authenticator;
     protected Func<string, bool>? PathExclusionFunc;
@@ -135,6 +134,7 @@ public abstract class BaseMcpServerInfoBuilder : IMcpServerInfoBuilder
         Prompts = new Dictionary<string, Prompt>();
         RegisteredTools = new Dictionary<string, ToolInfo>();
         RegisteredResources = new Dictionary<string, ResourceInfo>();
+        ExternalResources = new Dictionary<string, MCP.Resource>();
     }
 
     /// <inheritdoc />
@@ -396,7 +396,7 @@ public abstract class BaseMcpServerInfoBuilder : IMcpServerInfoBuilder
                 Name = safeName,
                 Description = enhancedDescription,
                 Tags = new List<string> { "api", ServerName },
-                ServerInfo = new ServerInfo() { Name = ServerName, Description = ServerDescription}
+                ServerInfo = new ServerInfo() { Name = ServerName, Description = ServerDescription }
             };
         }
         else

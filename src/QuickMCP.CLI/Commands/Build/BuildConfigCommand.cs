@@ -1,15 +1,12 @@
 ﻿using System.ComponentModel;
-using System.Net;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using QuickMCP.Authentication;
-using QuickMCP.CLI.Types;
 using QuickMCP.Helpers;
 using QuickMCP.Types;
 using GenerativeAI;
 using GenerativeAI.Types;
 using GenerativeAI.Utility;
-using QuickMCP.Builders;
 using Spectre.Console;
 using Spectre.Console.Cli;
 

@@ -1,7 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
 using QuickMCP.Abstractions;
-using QuickMCP.Helpers;
 using QuickMCP.Types;
 
 namespace QuickMCP.Authentication;

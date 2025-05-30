@@ -1,11 +1,8 @@
-﻿using System.Text.Json;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 using QuickMCP.Abstractions;
-using QuickMCP.Authentication;
 using QuickMCP.Helpers;
 using QuickMCP.Types;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Newtonsoft.Json;

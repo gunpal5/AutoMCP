@@ -37,6 +37,11 @@ public class ServerCommandSettings : CommandSettings
     [CommandOption("-l|--logging")]
     public bool? EnableLogging { get; set; }
 
+    [Description("Host Protocol.STDIO or HTTP.")]
+    [CommandOption("-h|--host-protocol")]
+    public string? HostProtocol { get; set; }
+
+
     public override ValidationResult Validate()
     {
         if (string.IsNullOrWhiteSpace(ConfigPath) && string.IsNullOrWhiteSpace(ConfigEnvVar) && string.IsNullOrEmpty(SpecPath) && string.IsNullOrEmpty(SpecUrl) && string.IsNullOrEmpty(ServerId))
@@ -67,7 +72,8 @@ public class ServerCommandSettings : CommandSettings
             ApiBaseUrl = ApiBaseUrl,
             ApiSpecPath = SpecPath,
             ServerName = ServerId,
-            ApiSpecUrl = SpecUrl
+            ApiSpecUrl = SpecUrl,
+            HostProtocol= HostProtocol
         };
     }
 }
